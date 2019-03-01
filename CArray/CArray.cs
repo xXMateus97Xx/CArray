@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -7,13 +8,12 @@ namespace CArray
     public ref struct CArray<T> where T : unmanaged
     {
         IntPtr _ptr;
-        int _size;
 
         public CArray(int length, bool initializeValues = false)
         {
             Length = length;
-            _size = Marshal.SizeOf<T>();
-            var fullSize = _size * length;
+            Size = Marshal.SizeOf<T>();
+            var fullSize = Size * length;
             _ptr = Marshal.AllocHGlobal(fullSize);
 
             if (initializeValues)
@@ -35,6 +35,8 @@ namespace CArray
         public bool IsEmpty => Length == 0;
 
         public int Length { get; }
+
+        public int Size { get; }
 
         public unsafe T this[int index]
         {
@@ -85,7 +87,12 @@ namespace CArray
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         IntPtr GetPosition(int index)
         {
-            return _ptr + index * _size;
+            return _ptr + index * Size;
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            return new CArrayIterator<T>(this);
         }
     }
 }

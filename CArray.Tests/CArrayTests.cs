@@ -100,7 +100,7 @@ namespace CArray.Tests
 
             try
             {
-                for (int i = 0; i < a.Length; i++)
+                for (var i = 0; i < a.Length; i++)
                     Assert.AreEqual(0, a[i]);
             }
             finally
@@ -124,6 +124,64 @@ namespace CArray.Tests
             finally
             {
                 cArray.Dispose();
+            }
+        }
+
+        [Test]
+        public void Should_Test_Iterator()
+        {
+            var a = new CArray<int>(10);
+
+            try
+            {
+                for (var i = 0; i < a.Length; i++)
+                    a[i] = i;
+
+                var index = 0;
+                foreach (var n in a)
+                    Assert.AreEqual(n, a[index++]);
+            }
+            finally
+            {
+                a.Dispose();
+            }
+        }
+
+        [Test]
+        public void Should_Test_Iterator_With_Byte()
+        {
+            var a = new CArray<byte>(10);
+
+            try
+            {
+                for (byte i = 0; i < a.Length; i++)
+                    a[i] = i;
+
+                var index = 0;
+                foreach (var n in a)
+                    Assert.AreEqual(n, a[index++]);
+            }
+            finally
+            {
+                a.Dispose();
+            }
+        }
+
+        [Test]
+        public void Should_Test_Empty_Iterator()
+        {
+            var a = new CArray<int>();
+
+            try
+            {
+                foreach (var n in a)
+                    Assert.Fail();
+
+                Assert.Pass();
+            }
+            finally
+            {
+                a.Dispose();
             }
         }
     }
