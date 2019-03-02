@@ -23,7 +23,6 @@ array.Dispose();
 3
 10
 */
-
 ```
 Could be used with pointers
 
@@ -41,7 +40,6 @@ array.Dispose();
 /* Output
 10
 */
-
 ```
 
 It's possible to initialize and Convert to a managed array
@@ -54,7 +52,6 @@ var cArray = CArray<int>.FromArray(managedArray);
 
 //Back to C# array
 var newManagedArray = cArray.ToArray();
-
 ```
 
 # Warnings
@@ -67,4 +64,3 @@ var newManagedArray = cArray.ToArray();
 # TODO
 
 * Separate Write and Read benchmarks, how to setup ref structs?
-* Implement some kind on Iterator

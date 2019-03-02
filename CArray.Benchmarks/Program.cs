@@ -58,7 +58,7 @@ namespace CArray.Benchmarks
         }
 
         [Benchmark]
-        public void WriteCsArray()
+        public void WriteAndReadCsArray()
         {
             var array = new int[length];
 

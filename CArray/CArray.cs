@@ -5,20 +5,23 @@ using System.Runtime.InteropServices;
 
 namespace CArray
 {
-    public ref struct CArray<T> where T : unmanaged
+    public unsafe ref struct CArray<T> where T : unmanaged
     {
-        IntPtr _ptr;
+        T* _ptr;
 
         public CArray(int length, bool initializeValues = false)
         {
             Length = length;
-            Size = Marshal.SizeOf<T>();
-            var fullSize = Size * length;
-            _ptr = Marshal.AllocHGlobal(fullSize);
+            var size = Marshal.SizeOf<T>();
+            var fullSize = size * length;
+            _ptr = (T*)Marshal.AllocHGlobal(fullSize);
 
             if (initializeValues)
-                for (int i = 0; i < fullSize; i++)
-                    Marshal.WriteByte(_ptr, i, 0);
+            {
+                var defaultT = default(T);
+                for (int i = 0; i < length; i++)
+                    *GetPosition(i) = defaultT;
+            }
         }
 
         public static CArray<T> FromArray(T[] source)
@@ -36,28 +39,26 @@ namespace CArray
 
         public int Length { get; }
 
-        public int Size { get; }
-
         public unsafe T this[int index]
         {
             get
             {
                 CheckPosition(index);
                 var ptr = GetPosition(index);
-                return *(T*)ptr;
+                return *ptr;
             }
             set
             {
                 CheckPosition(index);
                 var ptr = GetPosition(index);
-                *(T*)ptr = value;
+                *ptr = value;
             }
         }
 
         public void Dispose()
         {
-            Marshal.FreeHGlobal(_ptr);
-            _ptr = IntPtr.Zero;
+            Marshal.FreeHGlobal((IntPtr)_ptr);
+            _ptr = (T*)IntPtr.Zero;
         }
 
         public T[] ToArray()
@@ -74,7 +75,12 @@ namespace CArray
         {
             CheckPosition(index);
             var ptr = GetPosition(index);
-            return (T*)ptr;
+            return ptr;
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            return new CArrayIterator<T>(this);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -85,14 +91,9 @@ namespace CArray
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        IntPtr GetPosition(int index)
+        unsafe T* GetPosition(int index)
         {
-            return _ptr + index * Size;
-        }
-
-        public IEnumerator<T> GetEnumerator()
-        {
-            return new CArrayIterator<T>(this);
+            return _ptr + index;
         }
     }
 }

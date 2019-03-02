@@ -10,12 +10,10 @@ namespace CArray
     {
         readonly T* _ptr;
         readonly int _length;
-        readonly int _size;
         int _index;
 
         public CArrayIterator(CArray<T> cArray)
         {
-            _size = cArray.Size;
             _length = cArray.Length;
             _index = -1;
             if (!cArray.IsEmpty)
