@@ -20,7 +20,7 @@ array.Dispose();
 
 ...
 /* Output
-3
+{Some Random Number}
 10
 */
 ```
@@ -52,6 +52,42 @@ var cArray = CArray<int>.FromArray(managedArray);
 
 //Back to C# array
 var newManagedArray = cArray.ToArray();
+```
+
+It's possible to use foreach too
+
+```
+var array = new CArray<int>(2);
+array[0] = 1;
+array[1] = 2;
+
+foreach(var n in array.AsEnumerable())
+	Console.WriteLine(n);
+
+/* Output
+1
+2
+*/
+```
+Foreach support pointers too
+
+```
+var array = new CArray<int>(5);
+
+var index = 0;
+foreach (var n in a.AsPointerEnumerable())
+    *(int*)n = index++;
+
+foreach (var n in a.AsPointerEnumerable())
+    Console.WriteLine(*(int*)n);
+
+/* Output
+1
+2
+3
+4
+5
+*/
 ```
 
 # Warnings

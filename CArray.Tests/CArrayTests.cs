@@ -211,7 +211,7 @@ namespace CArray.Tests
                     a[i] = i;
 
                 var index = 0;
-                foreach (var n in a)
+                foreach (var n in a.AsEnumerable())
                     Assert.AreEqual(n, a[index++]);
             }
             finally
@@ -221,7 +221,28 @@ namespace CArray.Tests
         }
 
         [Test]
-        public void Should_Test_Iterator_With_Byte()
+        public unsafe void Should_Test_Pointer_Iterator()
+        {
+            var a = new CArray<int>(10);
+
+            try
+            {
+                var index = 0;
+                foreach (var n in a.AsPointerEnumerable())
+                    *(int*)n = index++;
+
+                index = 0;
+                foreach (var n in a.AsPointerEnumerable())
+                    Assert.AreEqual(*(int*)n, a[index++]);
+            }
+            finally
+            {
+                a.Dispose();
+            }
+        }
+
+        [Test]
+        public unsafe void Should_Test_Iterator_With_Byte()
         {
             var a = new CArray<byte>(10);
 
@@ -231,8 +252,29 @@ namespace CArray.Tests
                     a[i] = i;
 
                 var index = 0;
-                foreach (var n in a)
+                foreach (var n in a.AsEnumerable())
                     Assert.AreEqual(n, a[index++]);
+            }
+            finally
+            {
+                a.Dispose();
+            }
+        }
+
+        [Test]
+        public unsafe void Should_Test_Pointer_Iterator_With_Byte()
+        {
+            var a = new CArray<byte>(10);
+
+            try
+            {
+                byte index = 0;
+                foreach (var n in a.AsPointerEnumerable())
+                    *(byte*)n = index++;
+
+                index = 0;
+                foreach (var n in a.AsPointerEnumerable())
+                    Assert.AreEqual(*(byte*)n, a[index++]);
             }
             finally
             {
@@ -247,7 +289,25 @@ namespace CArray.Tests
 
             try
             {
-                foreach (var n in a)
+                foreach (var n in a.AsEnumerable())
+                    Assert.Fail();
+
+                Assert.Pass();
+            }
+            finally
+            {
+                a.Dispose();
+            }
+        }
+
+        [Test]
+        public void Should_Test_Empty_Pointer_Iterator()
+        {
+            var a = new CArray<int>();
+
+            try
+            {
+                foreach (var n in a.AsPointerEnumerable())
                     Assert.Fail();
 
                 Assert.Pass();

@@ -78,9 +78,19 @@ namespace CArray
             return ptr;
         }
 
-        public IEnumerator<T> GetEnumerator()
+        public IEnumerable<T> AsEnumerable()
         {
-            return new CArrayIterator<T>(this);
+            return new CArrayEnumerable<T>(this);
+        }
+
+        public IEnumerable<IntPtr> AsPointerEnumerable()
+        {
+            return new CArrayPointerEnumerable<T>(this);
+        }
+
+        public IEnumerator<IntPtr> GetPointerEnumerator()
+        {
+            return new CArrayPointerIterator<T>(this);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
